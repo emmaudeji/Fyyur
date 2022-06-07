@@ -126,15 +126,15 @@ class VenueForm(Form):
     phone = StringField(
         'phone'
     )
-    image_link = StringField(
-        'image_link'
-    )
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
         choices=Genre.choices()
     )
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
+    )
+    image_link = StringField(
+        'image_link'
     )
     website_link = StringField(
         'website_link', validators=[URL()]
@@ -160,15 +160,15 @@ class ArtistForm(Form):
     phone = StringField(
         'phone'
     )
-    image_link = StringField(
-        'image_link'
-    )
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
         choices=Genre.choices()
     )
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
+    )
+    image_link = StringField(
+        'image_link'
     )
     website_link = StringField(
         'website_link', validators=[URL()]

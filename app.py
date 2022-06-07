@@ -9,6 +9,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
+from sqlalchemy import func
 from logging import Formatter, FileHandler
 from forms import *
 from markupsafe import Markup
@@ -60,8 +61,26 @@ def index():
 # venue page
 @app.route('/venues')
 def venues():
-  venues = Venue.query.all()
-  return render_template('pages/venues.html', areas=venues)
+  venue_group = Venue.query.with_entities(func.count(Venue.id), Venue.city, Venue.state).group_by(Venue.city, Venue.state).all()
+  data = []
+
+  for area in venue_group:
+    venues_in_group = Venue.query.filter_by(state=area.state).filter_by(city=area.city).all()
+    venue_data = []
+    for venue in venues_in_group:
+      venue_data.append({
+        "id": venue.id,
+        "name": venue.name, 
+        "num_upcoming_shows": len(db.session.query(Show).filter(Show.venue_id==1).filter(Show.start_time>datetime.now()).all())
+      })
+    data.append({
+      "city": area.city,
+      "state": area.state, 
+      "venues": venue_data
+    })
+
+  return render_template('pages/venues.html', areas=data)
+
 
 # search for venue
 @app.route('/venues/search', methods=['POST'])
@@ -150,8 +169,8 @@ def create_venue_submission():
     address = request.form['address']
     phone = request.form['phone']
     genres = request.form.getlist('genres')
-    image_link = request.form['image_link']
     facebook_link = request.form['facebook_link']
+    image_link = request.form['image_link']
     website = request.form['website_link']
     seeking_talent = True if 'seeking_talent' in request.form else False 
     seeking_description = request.form['seeking_description']
@@ -166,10 +185,12 @@ def create_venue_submission():
   finally: 
     db.session.close()
   if error: 
-    flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed.')
+    flash('An error occurred. Venue ' + request.form['name']+ ' could not be listed.')
+    return redirect(url_for('create_venue_form'))
   if not error: 
     flash('Venue ' + request.form['name'] + ' was successfully listed!')
   return render_template('pages/home.html')
+
 
 # delete a venue
 @app.route('/venues/<venue_id>', methods=['DELETE'])
@@ -310,6 +331,7 @@ def create_artist_submission():
     db.session.close()
   if error: 
     flash('An error occurred. Artist ' + request.form['name']+ ' could not be listed.')
+    return redirect(url_for('create_artist_form'))
   if not error: 
     flash('Artist ' + request.form['name'] + ' was successfully listed!')
 
