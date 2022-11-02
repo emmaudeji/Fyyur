@@ -3,7 +3,7 @@
 ## Introduction
 
 Fyyur is a musical venue and artist booking site that facilitates the discovery and bookings of shows between local performing artists and venues. This site lets you list new artists and venues, discover them, and list shows with artists as a venue owner.
-This project is part of the assemment for a Full-satck web developer course at Udacity, sponsored by [Alx-T](https://www.alx-t.com/).
+This project is part of the assemment for a Full-stack web developer course at Udacity, sponsored by [Alx-T](https://www.alx-t.com/).
 
 ## Tech Stack
 - virtualenv as a tool to create isolated Python environments
